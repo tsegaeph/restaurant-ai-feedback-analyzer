@@ -1,0 +1,111 @@
+.hero-section {
+  position: relative;
+  height: 90vh;
+  min-height: 600px;
+  background-image: url('/images/hero.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(43, 27, 20, 0.6), rgba(43, 27, 20, 0.9));
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: var(--color-cream);
+  max-width: 800px;
+}
+.hero-content h1 {
+  font-size: 4.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+.hero-content h1 span {
+  color: var(--color-gold);
+  font-style: italic;
+}
+.hero-subtitle {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1px;
+  color: var(--color-cream-light);
+}
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+.btn-hero-primary, .btn-hero-secondary {
+  padding: 1rem 2.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.btn-hero-primary {
+  background-color: var(--color-gold);
+  color: var(--color-dark);
+}
+.btn-hero-primary:hover {
+  background-color: var(--color-cream);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+.btn-hero-secondary {
+  background-color: transparent;
+  color: var(--color-gold);
+  border: 1px solid var(--color-gold);
+}
+.btn-hero-secondary:hover {
+  background-color: var(--color-gold);
+  color: var(--color-dark);
+  transform: translateY(-4px);
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-section{
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-content {
+  position: relative;
+  bottom: 5rem;
+ }
+  .hero-content h1 {
+  font-size:2.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  }
+  .hero-subtitle {
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  }
+  .btn-hero-primary, .btn-hero-secondary {
+  padding: 1rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+  .hero img {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}

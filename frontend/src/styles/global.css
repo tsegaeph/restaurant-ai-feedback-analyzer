@@ -1,0 +1,169 @@
+:root {
+  --color-dark: #2B1B14;
+  --color-dark-hover: #3a251c;
+  --color-cream: #F5E6D3;
+  --color-cream-light: #FAF2E9;
+  --color-gold: #C8A45D;
+  --color-gold-hover: #e0b868;
+  --color-text-main: #333333;
+  --color-text-muted: #666666;
+  
+  --color-positive: #4CAF50;
+  --color-neutral: #FFC107;
+  --color-negative: #F44336;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+  --shadow-strong: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-text-main);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* --- Dashboard Styles --- */
+.ai-dashboard {
+  background: var(--color-dark);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--color-cream);
+  margin-top: 3rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 1rem;
+}
+
+.live-badge {
+  color: #ff4d4d;
+  font-size: 0.8rem;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 1.5rem;
+}
+
+.dash-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.pie-chart {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-family: var(--font-heading);
+  display: block;
+}
+
+.pill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.pill {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pill-positive { background: rgba(46, 125, 50, 0.2); color: #81c784; }
+.pill-negative { background: rgba(211, 47, 47, 0.2); color: #e57373; }
+.text-green { color: #81c784; }
+.text-red { color: #e57373; }
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .ai-dashboard {
+    padding: 1.2rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
