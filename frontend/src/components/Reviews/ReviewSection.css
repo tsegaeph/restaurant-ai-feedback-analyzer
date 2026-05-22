@@ -70,6 +70,17 @@
   border-color: #cbd5e0;
 }
 
+.loading-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+.loading-state p {
+  margin: 0.5rem 0;
+}
+
 @media (max-width: 900px) {
   .review-content {
     grid-template-columns: 1fr;
