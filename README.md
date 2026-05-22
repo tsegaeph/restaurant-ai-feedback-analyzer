@@ -306,7 +306,7 @@ GET /insights
 
 Software Engineering Student — Addis Ababa University
 
-Frontend Developer | AI Enthusiast | Full-Stack Developer
+AI Enthusiast | Full-Stack Developer
 
 # 📄 License
 This project is for educational and portfolio purposes.
