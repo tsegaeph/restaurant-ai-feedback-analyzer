@@ -131,3 +131,8 @@
   background: var(--color-gold);
   color: var(--color-dark);
 }
+@media (max-width: 768px) {
+  .summary-card p {
+  font-size: 0.95rem;
+ }
+}
