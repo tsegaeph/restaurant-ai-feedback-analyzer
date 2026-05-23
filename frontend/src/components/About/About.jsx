@@ -30,7 +30,7 @@ const About = () => {
           <span className="subtitle">OUR STORY</span>
           <h2>A Symphony of Culinary Excellence</h2>
           <p>
-            Founded in 2012, FlavorNest was born from a simple yet profound vision: to elevate the dining experience through meticulous attention to detail and an unwavering commitment to quality.
+            Founded in 2012, NuovoFiore was born from a simple yet profound vision: to elevate the dining experience through meticulous attention to detail and an unwavering commitment to quality.
           </p>
           <p>
             Our chefs believe that cooking is an art form. We source our ingredients exclusively from local heritage farms, ensuring every flavor profile is authentic, vibrant, and sustainable.

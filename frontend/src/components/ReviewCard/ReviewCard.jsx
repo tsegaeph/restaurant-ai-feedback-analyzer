@@ -40,11 +40,7 @@ const ReviewCard = ({ review }) => {
             }).toUpperCase()}
           </span>
         </div>
-        {review.confidence && (
-          <div className="ai-meta">
-            AI Confidence: {(review.confidence * 100).toFixed(0)}%
-          </div>
-        )}
+
       </div>
     </motion.div>
   );

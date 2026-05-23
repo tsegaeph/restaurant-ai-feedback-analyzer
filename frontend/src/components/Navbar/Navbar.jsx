@@ -9,7 +9,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container nav-container">
 
-        <div className="logo">FlavorNest</div>
+        <div className="logo">NuovoFiore</div>
 
         {/* Hamburger */}
         <div 
