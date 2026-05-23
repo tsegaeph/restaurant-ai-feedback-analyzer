@@ -6,16 +6,13 @@ from huggingface_hub import InferenceClient
 
 load_dotenv()
 
-# Retrieve the token
 HF_TOKEN = os.getenv("HF_API_KEY")
 
 if not HF_TOKEN:
     print("WARNING: HF_API_KEY is missing from .env!")
 
-# Initialize Hugging Face client
 client = InferenceClient(token=HF_TOKEN)
 
-# --- MODELS ---
 SENTIMENT_MODEL = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 LLM_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 
@@ -24,66 +21,49 @@ LLM_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 # NLP HELPERS
 # =========================================================
 
-def detect_negation(text: str) -> str | None:
-    """Detect specific negation patterns."""
-    
+def detect_negation(text: str):
     text_lower = text.lower()
 
     pos_negations = ["not bad", "not terrible", "not awful"]
     neg_negations = ["not good", "not great", "not amazing"]
 
-    has_pos = any(phrase in text_lower for phrase in pos_negations)
-    has_neg = any(phrase in text_lower for phrase in neg_negations)
+    has_pos = any(p in text_lower for p in pos_negations)
+    has_neg = any(p in text_lower for p in neg_negations)
 
     if has_pos and has_neg:
         return "NEUTRAL"
-
     elif has_pos:
         return "POSITIVE"
-
     elif has_neg:
         return "NEGATIVE"
 
-    # Neutral keyword fallback
     if re.search(r'\b(okay|fine|average|normal)\b', text_lower):
         return "NEUTRAL"
 
     return None
 
 
-def is_balanced(sorted_scores: list) -> bool:
-    """Check if model probabilities are too close."""
-    
+def is_balanced(sorted_scores):
     if len(sorted_scores) >= 2:
-        diff = sorted_scores[0]["score"] - sorted_scores[1]["score"]
-        return diff < 0.15
-
+        return (sorted_scores[0]["score"] - sorted_scores[1]["score"]) < 0.15
     return False
 
 
-def apply_rules(text: str, raw_results: list) -> dict:
-    """Apply rule-based corrections on top of model predictions."""
-
-    sorted_results = sorted(
-        raw_results,
-        key=lambda x: x["score"],
-        reverse=True
-    )
+def apply_rules(text, raw_results):
+    sorted_results = sorted(raw_results, key=lambda x: x["score"], reverse=True)
 
     top_label = sorted_results[0]["label"].upper()
     top_score = sorted_results[0]["score"]
 
-    # 1. Negation rules
-    negation_result = detect_negation(text)
+    neg = detect_negation(text)
 
-    if negation_result:
+    if neg:
         return {
-            "sentiment": negation_result,
+            "sentiment": neg,
             "confidence": top_score,
-            "reason": "rule-based override"
+            "reason": "rule override"
         }
 
-    # 2. Low confidence → neutral
     if top_score < 0.60:
         return {
             "sentiment": "NEUTRAL",
@@ -91,7 +71,6 @@ def apply_rules(text: str, raw_results: list) -> dict:
             "reason": "low confidence"
         }
 
-    # 3. Balanced probabilities → neutral
     if is_balanced(sorted_results):
         return {
             "sentiment": "NEUTRAL",
@@ -99,80 +78,57 @@ def apply_rules(text: str, raw_results: list) -> dict:
             "reason": "balanced scores"
         }
 
-    # 4. Default prediction
     return {
         "sentiment": top_label,
         "confidence": top_score,
-        "reason": "strong prediction"
+        "reason": "model prediction"
     }
 
 
 # =========================================================
-# SENTIMENT ANALYSIS
+# SENTIMENT
 # =========================================================
 
-def analyze_sentiment(text: str) -> dict:
-    """Analyze sentiment using Hugging Face model."""
-
+def analyze_sentiment(text: str):
     try:
-        result = client.text_classification(
-            text,
-            model=SENTIMENT_MODEL
-        )
-
+        result = client.text_classification(text, model=SENTIMENT_MODEL)
         raw_results = [r.__dict__ for r in result]
 
-        final_analysis = apply_rules(text, raw_results)
+        final = apply_rules(text, raw_results)
 
         return {
             "status": "success",
-            "sentiment": final_analysis["sentiment"],
-            "confidence": final_analysis["confidence"],
-            "reason": final_analysis["reason"],
+            "sentiment": final["sentiment"],
+            "confidence": final["confidence"],
+            "reason": final["reason"],
             "raw": raw_results
         }
 
     except Exception as e:
-        print(f"Hugging Face API Error (Sentiment): {repr(e)}")
-
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        return {"status": "error", "message": str(e)}
 
 
 # =========================================================
-# SUMMARY GENERATION
+# SUMMARY
 # =========================================================
 
-def generate_summary(reviews: list) -> str:
-    """Generate restaurant summary using LLM."""
-
+def generate_summary(reviews):
     if not reviews:
-        return "Not enough data to generate an AI summary."
+        return "Not enough data yet."
 
     try:
-        texts = [
-            f"- {r['rating']} Stars: {r['text']}"
-            for r in reviews
-        ]
-
-        reviews_text = "\n".join(texts)
+        text_block = "\n".join(
+            f"- {r['rating']} Stars: {r['text']}" for r in reviews
+        )
 
         messages = [
             {
                 "role": "system",
-                "content": (
-                    "You are a professional restaurant critic. "
-                    "Write ONE short impactful summary sentence."
-                )
+                "content": "You are a restaurant critic. One short powerful sentence only."
             },
             {
                 "role": "user",
-                "content": (
-                    f"Summarize these restaurant reviews:\n\n"
-                    f"{reviews_text}"
-                )
+                "content": text_block
             }
         ]
 
@@ -184,58 +140,53 @@ def generate_summary(reviews: list) -> str:
 
         return response.choices[0].message.content.strip()
 
-    except Exception as e:
-        print(f"Hugging Face API Error (Summary): {repr(e)}")
-
-        return "The AI summary is temporarily unavailable."
+    except Exception:
+        return "Summary temporarily unavailable."
 
 
 # =========================================================
-# INSIGHT GENERATION
+# INSIGHTS (🔥 FIXED VERSION)
 # =========================================================
 
-def generate_insights(reviews: list) -> dict:
-    """Generate top positive and negative restaurant insights."""
-
-    fallback_data = {
+def generate_insights(reviews):
+    fallback = {
         "top_problems": [
             "Service delays during busy hours",
             "Inconsistent food quality"
         ],
         "top_positives": [
             "Excellent food taste",
-            "Friendly restaurant atmosphere"
+            "Friendly atmosphere"
         ]
     }
 
     if not reviews:
-        return fallback_data
+        return fallback
 
     try:
-        texts = [f"- {r['text']}" for r in reviews]
-        reviews_text = "\n".join(texts)
+        text_block = "\n".join(f"- {r['text']}" for r in reviews)
 
         messages = [
             {
                 "role": "system",
                 "content": (
-                    "You are a Senior Restaurant Analyst. "
-                    "Return ONLY valid raw JSON."
+                    "Return ONLY valid JSON. "
+                    "No commentary."
                 )
             },
             {
                 "role": "user",
-                "content": (
-                    f"Analyze these reviews:\n\n"
-                    f"{reviews_text}\n\n"
+                "content": f"""
+Analyze reviews:
 
-                    "Find:\n"
-                    "1. Two major positive trends\n"
-                    "2. Two major negative trends\n\n"
+{text_block}
 
-                    "Return ONLY this JSON:\n"
-                    "{\"top_problems\": [], \"top_positives\": []}"
-                )
+Return ONLY JSON in this exact format:
+{{
+  "top_positives": ["...", "..."],
+  "top_problems": ["...", "..."]
+}}
+"""
             }
         ]
 
@@ -247,74 +198,40 @@ def generate_insights(reviews: list) -> dict:
 
         content = response.choices[0].message.content
 
-        # Extract JSON safely
-        match = re.search(r'(\{.*\})', content, re.DOTALL)
-
+        match = re.search(r'\{.*\}', content, re.DOTALL)
         if not match:
-            print(f"AI response was not valid JSON: {content}")
-            return fallback_data
+            return fallback
 
-        clean_json = match.group(1)
-        data = json.loads(clean_json)
+        data = json.loads(match.group())
 
-        # =================================================
-        # CLEAN + NORMALIZE OUTPUT
-        # =================================================
+        # 🔥 FINAL CLEANUP (very strict)
+        def clean(items):
+            clean_list = []
 
-        def clean_items(items):
-
-            cleaned = []
-
-            invalid_words = [
-                "theme",
-                "name",
-                "placeholder",
-                "item",
-                "positive",
-                "negative"
-            ]
-
-            for item in items:
-
-                # Convert object → readable string
-                if isinstance(item, dict):
-
-                    key = next(iter(item.keys()), "Unknown")
-
-                    item = key.replace("_", " ").title()
-
-                item = str(item).strip()
-
-                # Skip useless placeholders
-                if item.lower() in invalid_words:
+            for x in items:
+                if isinstance(x, str):
+                    val = x.strip()
+                elif isinstance(x, dict):
+                    val = next(iter(x.keys())).replace("_", " ").title()
+                else:
                     continue
 
-                # Remove duplicates
-                if item not in cleaned:
-                    cleaned.append(item)
+                # block garbage placeholders completely
+                if val.lower() in ["theme", "name", "item", "positive", "negative"]:
+                    continue
 
-            return cleaned[:2]
+                if val not in clean_list:
+                    clean_list.append(val)
 
-        top_problems = clean_items(
-            data.get("top_problems", [])
-        )
+            return clean_list[:2]
 
-        top_positives = clean_items(
-            data.get("top_positives", [])
-        )
-
-        # Fallback if AI output is garbage
-        if not top_problems:
-            top_problems = fallback_data["top_problems"]
-
-        if not top_positives:
-            top_positives = fallback_data["top_positives"]
+        positives = clean(data.get("top_positives", []))
+        problems = clean(data.get("top_problems", []))
 
         return {
-            "top_problems": top_problems,
-            "top_positives": top_positives
+            "top_positives": positives or fallback["top_positives"],
+            "top_problems": problems or fallback["top_problems"]
         }
 
-    except Exception as e:
-        print(f"Insight Generation Error: {repr(e)}")
-        return fallback_data
+    except Exception:
+        return fallback
