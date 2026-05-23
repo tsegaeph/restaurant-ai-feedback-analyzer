@@ -1,4 +1,4 @@
-# 🍽️ FlavorNest AI — Restaurant Sentiment Analysis Platform
+# 🍽️ NuovoFiore — Restaurant Website with AI Sentiment Analysis Platform
 
 An AI-powered restaurant feedback analysis platform that collects customer reviews, performs real-time sentiment analysis, generates restaurant performance summaries, and extracts key business insights using Large Language Models (LLMs).
 
