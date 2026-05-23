@@ -84,7 +84,6 @@
     flex-direction: column;
     text-align: center;
     overflow-x: hidden;
-    padding: 0 1rem;
   }
   .hero-content {
   position: relative;
