@@ -21,14 +21,35 @@ const Footer = () => {
         <div className="footer-links">
           <h4>CONNECT</h4>
           <div className="social-links">
-            <a href="#">Instagram</a>
-            <a href="#">Facebook</a>
-            <a href="#">Twitter</a>
+            <a 
+              href="https://instagram.com/tsega_00" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+
+            <a 
+              href="https://t.me/IDONHAVEAUSERNAME" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Telegram
+            </a>
+
+            <a 
+              href="https://www.linkedin.com/in/tsegaephrem/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+
           </div>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} NuovoFiore Analytics & Dining. All rights reserved.</p>
+        <p>  &copy; {new Date().getFullYear()} NuovoFiore Analytics & Dining • Built by Tsega Ephrem</p>
       </div>
     </footer>
   );

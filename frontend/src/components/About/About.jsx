@@ -36,7 +36,7 @@ const About = () => {
             Our chefs believe that cooking is an art form. We source our ingredients exclusively from local heritage farms, ensuring every flavor profile is authentic, vibrant, and sustainable.
           </p>
           <div className="signature">
-            <h4>Julian Vane</h4>
+            <h4>Tsega Ephrem</h4>
             <span>EXECUTIVE CHEF</span>
           </div>
         </motion.div>

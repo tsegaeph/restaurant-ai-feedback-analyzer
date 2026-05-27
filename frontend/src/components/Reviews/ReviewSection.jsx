@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReviewContext } from '../../context/ReviewContext';
 import ReviewCard from '../ReviewCard/ReviewCard';
@@ -7,27 +7,14 @@ import SentimentDashboard from '../SentimentDashboard/SentimentDashboard';
 import './ReviewSection.css';
 
 const ReviewSection = () => {
-  const { reviews } = useContext(ReviewContext);
+  const { reviews, loading } = useContext(ReviewContext);
+
   const [showAI, setShowAI] = useState(false);
-
-  // 🔥 NEW: loading state for UX
-  const [loading, setLoading] = useState(true);
-
   const [visibleCount, setVisibleCount] = useState(3);
 
   const handleLoadMore = () => {
     setVisibleCount(prev => prev + 3);
   };
-
-  // 🔥 simulate backend wake-up / fetch delay handling
-  useEffect(() => {
-    if (reviews && reviews.length >= 0) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 1200); // small delay = better UX feel
-      return () => clearTimeout(timer);
-    }
-  }, [reviews]);
 
   return (
     <section id="reviews" className="review-section">
@@ -60,32 +47,40 @@ const ReviewSection = () => {
         <div className="review-content">
 
           <div className="review-cards-column">
-
-            {/* 🔥 LOADING STATE */}
             {loading ? (
               <div className="loading-state">
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                <motion.div
+                  className="loader-emoji"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 >
-                  🔄 Connecting to AI server...
-                </motion.p>
+                🍳
+                </motion.div>
 
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  Preparing restaurant insights...
+                  Connecting to AI server...
                 </motion.p>
+
+                <span className="loading-subtext">
+                  Preparing restaurant insights and reviews...
+                </span>
               </div>
             ) : reviews.length === 0 ? (
               <p>No reviews yet. Be the first to share your experience!</p>
             ) : (
               <div className="cards-wrapper">
-
-                {[...reviews].reverse().slice(0, visibleCount).map((review) => (
-                  <ReviewCard key={review.id} review={review} />
-                ))}
+                {[...reviews]
+                  .reverse()
+                  .slice(0, visibleCount)
+                  .map((review) => (
+                    <ReviewCard
+                      key={review.id || Math.random()}
+                      review={review}
+                    />
+                  ))}
 
                 {visibleCount < reviews.length && (
                   <motion.button
@@ -97,7 +92,6 @@ const ReviewSection = () => {
                     View More Reviews
                   </motion.button>
                 )}
-
               </div>
             )}
           </div>
@@ -105,7 +99,6 @@ const ReviewSection = () => {
           <div className="review-input">
             <ReviewInput />
           </div>
-
         </div>
       </div>
     </section>

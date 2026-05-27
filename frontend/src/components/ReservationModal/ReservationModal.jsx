@@ -29,17 +29,17 @@ const ReservationModal = ({ isOpen, onClose }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="reservation-form">
-            <div className="form-group">
+            <div className="form-group2">
               <label>Date</label>
               <input type="date" required className="modal-input" />
             </div>
 
             <div className="form-row">
-              <div className="form-group">
+              <div className="form-group2">
                 <label>Time</label>
                 <input type="time" required className="modal-input" />
               </div>
-              <div className="form-group">
+              <div className="form-group2">
                 <label>Guests</label>
                 <input type="number" min="1" max="12" defaultValue="2" className="modal-input" />
               </div>
